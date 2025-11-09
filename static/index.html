@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Погода по IP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input {
+            width: 250px;
+            padding: 10px 30px 10px 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .reset-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 20px;
+            color: #007BFF;
+        }
+
+        .reset-icon:hover {
+            color: #0056b3;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Информация о погоде</h1>
+    <p>Введите IP-адрес, чтобы узнать текущую температуру.</p>
+
+    <div class="input-container">
+        <div class="input-wrapper">
+            <input type="text" id="ipAddress" placeholder="Введите IP-адрес">
+            <i class="reset-icon" onclick="getMyIp()">↻</i>
+        </div>
+        <button class="btn" onclick="getWeather()">Узнать погоду</button>
+    </div>
+
+    <div class="error" id="error-message"></div>
+
+    <div class="result" id="weatherResult"></div>
+</div>
+
+<script>
+    function getWeather() {
+        const ipAddress = document.getElementById('ipAddress').value;
+        const errorMessage = document.getElementById('error-message');
+
+        if (!validateIP(ipAddress)) {
+            errorMessage.innerHTML = 'Пожалуйста, введите корректный IP-адрес.';
+            return;
+        } else {
+            errorMessage.innerHTML = '';
+        }
+
+        fetch('/api/1/weather/current', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ip: ipAddress})
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const weatherResult = document.getElementById('weatherResult');
+                weatherResult.innerHTML = `Температура за окном: ${data.temperature}°C`;
+            })
+            .catch(error => {
+                console.error('Ошибка при запросе:', error);
+                const weatherResult = document.getElementById('weatherResult');
+                weatherResult.innerHTML = 'Упс, ошибка. Попробуйте позже';
+            });
+    }
+
+    function getMyIp() {
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                const ip = data.ip;  // Получаем IP
+                document.getElementById('ipAddress').value = ip;  // Подставляем IP в поле ввода
+                document.getElementById('error-message').innerHTML = ''; // Убираем сообщение об ошибке
+            })
+            .catch(error => {
+                console.error('Ошибка при получении IP:', error);
+                alert('Не удалось получить ваш IP. Попробуйте позже.');
+            });
+    }
+
+    function validateIP(ip) {
+        const regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+        return regex.test(ip);
+    }
+
+    window.onload = function() {
+        getMyIp();
+    }
+</script>
+</body>
+</html>
