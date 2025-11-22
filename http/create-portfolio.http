@@ -1,0 +1,11 @@
+# Токен для T-Инвестиции, https://www.tbank.ru/invest/settings/api/
+
+POST http://127.0.0.1:8080/api/portfolio/create
+Content-Type: application/json
+Authorization: 12345
+
+{
+  "token": "TOKEN"
+}
+
+###

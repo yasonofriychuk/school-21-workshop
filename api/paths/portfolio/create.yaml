@@ -1,0 +1,50 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: API для создания портфолио
+servers:
+  - url: https://localhost:8080/api
+paths:
+  /portfolio/create:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: ../../components/schemas/error.yaml
+        403:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: ../../components/schemas/error.yaml
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: ../../components/schemas/error.yaml
