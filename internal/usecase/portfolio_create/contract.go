@@ -1,3 +1,5 @@
+//go:generate go tool mockgen -source=$GOFILE -destination contract_mock.go -package $GOPACKAGE
+
 package portfolio_create
 
 import (

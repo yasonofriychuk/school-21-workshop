@@ -15,7 +15,7 @@ const (
 	defaultTimeout  = time.Second
 )
 
-func Migrate(dsn string) error {
+func Migrate(dsn, sourceUrl string) error {
 	var (
 		attempts = defaultAttempts
 		m        *migrate.Migrate
@@ -23,7 +23,7 @@ func Migrate(dsn string) error {
 	)
 
 	for attempts > 0 {
-		m, err = migrate.New("file://migrations", dsn)
+		m, err = migrate.New(sourceUrl, dsn)
 		if err == nil {
 			break
 		}

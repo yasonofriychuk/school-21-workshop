@@ -30,7 +30,7 @@ func Run(ctx context.Context) error {
 	log := logger.NewLogger(slog.LevelDebug, cfg.Env, os.Stdout)
 	db := postgres.MustNew(cfg.DSN)
 
-	if err := migrate.Migrate(cfg.DSN); err != nil {
+	if err := migrate.Migrate(cfg.DSN, "file://migrations"); err != nil {
 		return fmt.Errorf("migrate.Migrate: %w", err)
 	}
 
