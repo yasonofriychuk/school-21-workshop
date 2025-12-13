@@ -1,8 +1,11 @@
+//go:build integration
+
 package post_portfolio_create
 
 import (
 	"bytes"
 	"context"
+	"errors"
 	"github.com/goccy/go-json"
 	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
@@ -94,6 +97,21 @@ func TestHandler_PostPortfolioCreate(t *testing.T) {
 				UpdatedAt:              currentTime,
 				DeletedAt:              nil,
 			},
+		},
+		{
+			name:      "tinvest getAccounts return error",
+			token:     token,
+			accountId: accountId,
+			userId:    userId,
+			mockTInvestService: func(m *portfolio_create.MocktInvestService) {
+				m.EXPECT().Select(gomock.Any(), gomock.Any(), gomock.Any()).
+					Return(user_service_client.GetAccountsResponse{}, errors.New("some error"))
+			},
+			statusCode: http.StatusInternalServerError,
+			body: api.PostPortfolioCreate500JSONResponse{
+				Message: "Не удалось сохранить токен",
+			},
+			portfolio: portfolio{},
 		},
 	}
 
@@ -190,8 +208,11 @@ func TestHandler_PostPortfolioCreate(t *testing.T) {
 				tt.accountId,
 			))
 
-			require.Len(t, portfolios, 1)
+			if tt.statusCode != http.StatusOK {
+				return
+			}
 
+			require.Len(t, portfolios, 1)
 			tokenDecrypt, err := crypter.Decrypt(portfolios[0].Token)
 			require.NoError(t, err)
 			portfolios[0].Token = tokenDecrypt
