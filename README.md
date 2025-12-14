@@ -23,11 +23,15 @@
 интеграционных от unit тестов.
 
 Ссылки на код:
-- [Проект в состоянии до покрытия тестами](https://github.com/yasonofriychuk/school-21-workshop/tree/dae4009ff120c5fceb9797f45d38eedc11cb4471)
+- [Проект в состоянии до покрытия тестами](https://github.com/yasonofriychuk/school-21-workshop/tree/2025-11-23_test)
+- [Проект с тестами](https://github.com/yasonofriychuk/school-21-workshop/tree/2025-11-23_test_finish)
 
 ## 14.12.2025 Обработка ошибок в Go
 
 **Темы по Go**: error, пакет errors, кастомные ошибки
 
 Рассмотрим приёмы работы с ошибками в Golang: обёртка, определение типа ошибки, объявление собственных видов ошибок.
+
+Ссылки на код:
+- [Код в конце занятия](https://github.com/yasonofriychuk/school-21-workshop/tree/2025-12-14-handle-errors)
 
